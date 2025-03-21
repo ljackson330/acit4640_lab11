@@ -1,0 +1,23 @@
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Create index.html
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: reload nginx
+
+- name: Create nginx configuration
+  ansible.builtin.copy:
+    src: default.conf
+    dest: /etc/nginx/sites-available/default
+  notify: reload nginx
+
+- name: Enable nginx configuration
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  notify: reload nginx
